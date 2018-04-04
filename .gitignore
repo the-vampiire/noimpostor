@@ -99,3 +99,9 @@ ENV/
 
 # mypy
 .mypy_cache/
+
+# google cloud
+app.yaml
+
+# vscode
+.vscode/
