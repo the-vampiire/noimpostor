@@ -11,9 +11,8 @@ ALLOWED_HOSTS = [
     '127.0.0.1', # for local testing 
 ]
 
-# TODO: add project apps here
 INSTALLED_APPS = [
-    # 'YOUR-PROJECT-APP-NAME', # add your other project apps here
+    'user',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -38,7 +37,7 @@ WSGI_APPLICATION = 'root.wsgi.application'
 TEMPLATES = [
     {
       'BACKEND': 'django.template.backends.django.DjangoTemplates',
-      'DIRS': [],
+      'DIRS': ['templates'],
       'APP_DIRS': True,
       'OPTIONS': {
         'context_processors': [
