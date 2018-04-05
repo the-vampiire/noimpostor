@@ -20,6 +20,9 @@ class Privacy(Enum):
 
 
 class DefaultPrivacy(Model):
+    class Meta:
+        db_table = 'default_privacy'
+
     user = OneToOneField(to = User, on_delete = CASCADE)
     setting = IntegerField(choices = Privacy.as_choices(), default = Privacy.private)
 

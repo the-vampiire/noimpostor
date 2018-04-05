@@ -3,6 +3,6 @@
 
 {% block content %}
     <div>{{ user.username }}</div>
-    <div>{{ user.defaultprivacy.setting }}</div>
+    <div>{{ user.defaultprivacy.get_setting_display }}</div>
 {% endblock content %}
     

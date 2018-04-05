@@ -3,7 +3,7 @@
 from django.conf import settings
 from django.db import migrations, models
 import django.db.models.deletion
-import user.models
+import profile.models
 
 
 class Migration(migrations.Migration):
@@ -19,7 +19,7 @@ class Migration(migrations.Migration):
             name='DefaultPrivacy',
             fields=[
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('setting', models.IntegerField(choices=[(-1, 'private'), (0, 'anonymous'), (1, 'public')], default=user.models.Privacy(-1))),
+                ('setting', models.IntegerField(choices=[(-1, 'private'), (0, 'anonymous'), (1, 'public')], default=profile.models.Privacy(-1))),
                 ('user', models.OneToOneField(on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL)),
             ],
         ),
