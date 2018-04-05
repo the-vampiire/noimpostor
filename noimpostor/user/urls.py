@@ -4,5 +4,5 @@ from .views import profile
 app_name = 'user'
 
 urlpatterns = [
-    path('<int:id>', profile, name = 'profile')
+    path('', profile, name = 'profile') # username passed from root.urls
 ]
