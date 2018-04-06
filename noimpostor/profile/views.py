@@ -3,10 +3,12 @@ from .forms import UserUpdateForm, DefaultPrivacyForm
 from django.contrib.auth.models import User
 from .models import DefaultPrivacy
 
-from django.http import HttpResponse # TODO: remove when view is completed
+def overview(request, username):
+    """
+    User overview page
 
-
-def overview(request, username): # username
+    displays user accomplishments, challenges, and conquers [conquered challenges]
+    """
     user = get_object_or_404(User, username = username)
     return render(
         request,
@@ -19,8 +21,11 @@ def overview(request, username): # username
 
 def update(request, username):
     if not request.user.is_authenticated:
-        # TODO: add proper login redirect when user_actions app is complete
-        return HttpResponse('Login redirect here')
+        return redirect(reverse('actions:login'))
+
+    # redirect for tricksy hobbitses that append /update to another users page
+    elif username != request.user.username:
+        return redirect(reverse('profile:overview', kwargs = { 'username': username }))
 
     update_form = UserUpdateForm(request.POST or None, instance = request.user)
     privacy_form = DefaultPrivacyForm(request.POST or None)
@@ -43,6 +48,7 @@ def update(request, username):
         request,
         'profile/update.html',
         context = {
+            'title': 'Profile Update',
             'update_form': update_form,
             'privacy_form': privacy_form
         }
