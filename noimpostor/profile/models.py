@@ -24,5 +24,9 @@ class DefaultPrivacy(Model):
         db_table = 'default_privacy'
 
     user = OneToOneField(to = User, on_delete = CASCADE)
-    setting = IntegerField(choices = Privacy.as_choices(), default = Privacy.private)
+    setting = IntegerField(
+        choices = Privacy.as_choices(),
+        default = Privacy.private,
+        verbose_name = 'Default Privacy Setting'
+    )
 
