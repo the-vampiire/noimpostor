@@ -1,0 +1,13 @@
+{% extends 'global/base.html' %}
+
+
+{% block content %}
+    <form method="POST" action = "{% url 'profile:update' username=request.user.username %}">
+        {% csrf_token %}
+        {{ update_form }}
+        {{ privacy_form }}
+        <button type="submit">Update</button>
+    </form>
+{% endblock content %}
+    
+
