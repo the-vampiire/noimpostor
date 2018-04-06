@@ -1,5 +1,6 @@
 from django.contrib.auth.forms import AuthenticationForm
 from django.shortcuts import render, reverse, redirect
+from django.contrib.auth.decorators import login_required
 from django.contrib.auth import login, logout
 
 def user_login(request):
@@ -19,3 +20,7 @@ def user_login(request):
     # GET or invalid form -> re-render the form [blank or with errors]
     return render(request, 'actions/login.html', context = { 'form': login_form })
 
+@login_required(login_url = 'actions:login')
+def user_logout(request):
+    logout(request)
+    return redirect('/') # return logged out user to home page
