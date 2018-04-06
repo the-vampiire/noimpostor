@@ -10,14 +10,14 @@ def overview(request, username):
     displays user accomplishments, challenges, and conquers [conquered challenges]
     """
     user = get_object_or_404(User, username = username)
-    return render(
-        request,
-        'profile/overview.html',
-        context = { 
-            'user': user,
-            'title': "%s%s's Profile" % (user.username[0].upper(), user.username[1:]) 
-        }
-    )
+    context = { 
+        'title': "%s%s's Profile" % (user.username[0].upper(), user.username[1:]),
+        'user': user,
+        # render 'update profile' button if the logged-in user is on their own overview page
+        'editable': user == request.user 
+    }
+
+    return render(request, 'profile/overview.html', context)
 
 def update(request, username):
     if not request.user.is_authenticated:

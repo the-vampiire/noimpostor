@@ -4,5 +4,11 @@
 {% block content %}
     <div>{{ user.username }}</div>
     <div>{{ user.defaultprivacy.get_setting_display }}</div>
+    
+    {% if editable %}
+        <a href="{% url 'profile:update' username=request.user.username %}"><button>Update Profile</button></a>
+    {% endif %}
+        
+    
 {% endblock content %}
     
