@@ -19,6 +19,12 @@ def overview(request, username):
         # render 'update profile' button if the logged-in user is on their own overview page
         'editable': user == request.user 
     }
+
+    # authed user viewing another users profile page
+    if user != request.user:
+        # set 'following' boolean if the authed user is following the profile user
+        context['following'] = request.user.following.all().filter(following = user).count() == 1
+
     return render(request, 'profile/overview.html', context)
 
 @login_required(login_url = 'actions:login')
@@ -57,13 +63,22 @@ def follow(request, username):
     # if a tricksy hobbitses try to follow themself
     if user != request.user:
         try:
-            Follow(
-                following = user,
-                follower = request.user
-            ).save()
+            Follow(following = user, follower = request.user).save()
         except IntegrityError as error:
             # user is already following and raises unique constraint ('following', 'follower') error
             # ignore and proceed to redirect
             pass
 
+    return redirect(reverse('profile:overview', kwargs = { 'username': username }))
+
+@login_required(login_url = 'actions:login')
+def unfollow(request, username):
+    follow = get_object_or_404(
+        Follow,
+        follower = request.user,
+        following = User.objects.get(username = username)
+    )
+
+    follow.delete()
+    # TODO: add flash success message
     return redirect(reverse('profile:overview', kwargs = { 'username': username }))

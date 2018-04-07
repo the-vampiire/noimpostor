@@ -7,6 +7,10 @@
     
     {% if editable %}
         <a href="{% url 'profile:update' username=request.user.username %}"><button>Update Profile</button></a>
+    {% elif following %}
+        <a href="{% url 'profile:unfollow' username=user.username %}"><button>Unfollow</button></a>
+    {% else %}
+        <a href="{% url 'profile:follow' username=user.username %}"><button>Follow</button></a> 
     {% endif %}
         
     

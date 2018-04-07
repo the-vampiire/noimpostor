@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import overview, update, follow
+from .views import overview, update, follow, unfollow
 
 app_name = 'profile'
 
@@ -7,5 +7,6 @@ app_name = 'profile'
 urlpatterns = [ 
     path('', overview, name = 'overview'),
     path('update', update, name = 'update'),
-    path('follow', follow, name = 'follow') 
+    path('follow', follow, name = 'follow'),
+    path('unfollow', unfollow, name = 'unfollow')
 ]
