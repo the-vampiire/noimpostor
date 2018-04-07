@@ -54,3 +54,7 @@ def user_login(request):
 def user_logout(request):
     logout(request)
     return redirect('/') # return logged out user to home page
+
+def follow_user(request, username):
+    # TODO: add later when followers app is created
+    pass
