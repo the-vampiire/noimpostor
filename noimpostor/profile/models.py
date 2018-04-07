@@ -1,5 +1,6 @@
-from django.db.models import Model, IntegerField, OneToOneField, CASCADE
+from django.db.models import Model, IntegerField, OneToOneField, ForeignKey, CASCADE
 from django.contrib.auth.models import User
+from root.base_model import Base
 from enum import Enum
 
 class Privacy(Enum):
@@ -30,3 +31,13 @@ class DefaultPrivacy(Model):
         verbose_name = 'Default Privacy Setting'
     )
 
+class Follow(Base):
+    class Meta:
+        db_table = 'follows'
+        unique_together = ('following', 'follower')
+
+    # user.followers.all()[.filter()] -> returns a users followers
+    following = ForeignKey(User, on_delete = CASCADE, related_name = 'followers')
+    
+    # user.following.all()[.filter()] -> returns users followed by the user
+    follower = ForeignKey(User, on_delete = CASCADE, related_name = 'following')

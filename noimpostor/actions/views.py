@@ -12,12 +12,6 @@ def user_register(request):
 
     register_form = UserCreationForm(data = request.POST or None)
     privacy_form = DefaultPrivacyForm(data = request.POST or None)
-
-    context = {
-        'title': 'Register',
-        'register_form': register_form,
-        'privacy_form': privacy_form
-    }
     
     if request.method == 'POST' and all((register_form.is_valid(), privacy_form.is_valid())):
         user = register_form.save()
@@ -31,30 +25,38 @@ def user_register(request):
         return redirect(reverse('profile:overview', kwargs = { 'username': user.username }))
     
     # GET or invalid form -> re-render the form [blank or with errors]
+    context = {
+        'title': 'Register',
+        'register_form': register_form,
+        'privacy_form': privacy_form
+    }
     return render(request, 'actions/register.html', context)
 
 def user_login(request):
     # redirect an already logged in user
     if request.user.is_authenticated:
         return redirect(reverse('profile:overview', kwargs = { 'username': request.user.username }))
-
-    # if user is not logged in go into GET/POST form routine
+        
     login_form = AuthenticationForm(data = request.POST or None)
+    # TODO: cookie setting for where user should redirect on login
+    # TODO: add cookie setting option to 'profile:update' view
+    next = request.GET.get('next') or request.COOKIES.get('login_redirect')
 
     # POST for validation + login
     if request.method == 'POST' and login_form.is_valid():
         user = login_form.get_user()
         login(request, user)
-        return redirect(reverse('profile:overview', kwargs = { 'username': user.username }))
+        return redirect(next or reverse('profile:overview', kwargs = { 'username': user.username }))
     
     # GET or invalid form -> re-render the form [blank or with errors]
-    return render(request, 'actions/login.html', context = { 'form': login_form })
+    context = {
+        'title': 'Log In',
+        'form': login_form,
+        'next': next 
+    }
+    return render(request, 'actions/login.html', context)
 
 @login_required(login_url = 'actions:login')
 def user_logout(request):
     logout(request)
     return redirect('/') # return logged out user to home page
-
-def follow_user(request, username):
-    # TODO: add later when followers app is created
-    pass

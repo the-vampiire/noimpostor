@@ -1,7 +1,9 @@
 from django.shortcuts import render, redirect, reverse, get_object_or_404
+from django.contrib.auth.decorators import login_required
 from .forms import UserUpdateForm, DefaultPrivacyForm
 from django.contrib.auth.models import User
-from .models import DefaultPrivacy
+from .models import DefaultPrivacy, Follow
+from django.db import IntegrityError
 
 def overview(request, username):
     """
@@ -10,46 +12,58 @@ def overview(request, username):
     displays user accomplishments, challenges, and conquers [conquered challenges]
     """
     user = get_object_or_404(User, username = username)
+    
     context = { 
         'title': "%s%s's Profile" % (user.username[0].upper(), user.username[1:]),
         'user': user,
         # render 'update profile' button if the logged-in user is on their own overview page
         'editable': user == request.user 
     }
-
     return render(request, 'profile/overview.html', context)
 
+@login_required(login_url = 'actions:login')
 def update(request, username):
-    if not request.user.is_authenticated:
-        return redirect(reverse('actions:login'))
-
     # redirect for tricksy hobbitses that append /update to another users page
-    elif username != request.user.username:
+    if username != request.user.username:
         return redirect(reverse('profile:overview', kwargs = { 'username': username }))
 
     update_form = UserUpdateForm(request.POST or None, instance = request.user)
-    privacy_form = DefaultPrivacyForm(request.POST or None)
+    privacy_form = DefaultPrivacyForm(
+        request.POST or None,
+        # pre-select users existing setting
+        initial = { 'setting': request.user.defaultprivacy.setting }
+    )
 
-    if request.method == 'POST':
-        if update_form.is_valid() and privacy_form.is_valid():
-            user = update_form.save()
-            user.defaultprivacy.setting = privacy_form.cleaned_data['setting']
-            user.defaultprivacy.save()
+    if request.method == 'POST' and all((update_form.is_valid(), privacy_form.is_valid())):
+        user = update_form.save()
+        user.defaultprivacy.setting = privacy_form.cleaned_data['setting']
+        user.defaultprivacy.save()
 
-            # TODO: add a confirmation -> redirect or flash message on redirect
-            return redirect(
-                reverse(
-                    'profile:overview',
-                    kwargs = { 'username': user.username }
-                )
-            )
+        # TODO: add a flash success message on redirect
+        return redirect(reverse('profile:overview', kwargs = { 'username': user.username }))
+
     # GET
-    return render(
-        request,
-        'profile/update.html',
-        context = {
+    context = {
             'title': 'Profile Update',
             'update_form': update_form,
             'privacy_form': privacy_form
-        }
-    )
+    }
+    return render(request, 'profile/update.html', context)
+
+@login_required(login_url = 'actions:login')
+def follow(request, username):
+    user = get_object_or_404(User, username = username)
+    
+    # if a tricksy hobbitses try to follow themself
+    if user != request.user:
+        try:
+            Follow(
+                following = user,
+                follower = request.user
+            ).save()
+        except IntegrityError as error:
+            # user is already following and raises unique constraint ('following', 'follower') error
+            # ignore and proceed to redirect
+            pass
+
+    return redirect(reverse('profile:overview', kwargs = { 'username': username }))
