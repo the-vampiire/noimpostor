@@ -56,7 +56,7 @@ class Post(Base):
     title = CharField(blank = False, max_length = 140)
     notes = TextField(blank = True)
     user = ForeignKey(User, on_delete = CASCADE, related_name = 'users')
-    privacy_setting = IntegerField(
+    privacy = IntegerField(
         choices = Privacy.as_choices(),
         default = Privacy.private,
         verbose_name = 'Privacy Setting'
