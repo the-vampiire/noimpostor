@@ -2,9 +2,53 @@
 
 
 {% block content %}
-    <div>{{ user.username }}</div>
-    <div>{{ user.defaultprivacy.get_setting_display }}</div>
+    <div>Username: {{ user.username }}</div>
+    <div>Default Privacy: {{ user.defaultprivacy.get_setting_display }}</div>
+
+    <h3>Accomplishments</h3>
+    <ul>
+        {% for accomplishment in accomplishments %}
+            <li>
+                <a href="{% url 'accomplishments:view' accomplishment_id=accomplishment.id %}">
+                    {{ accomplishment.title }}
+                </a>
+            </li>
+        {% endfor %}   
+    </ul>
+
+    <h3>Challenges</h3>
+    <ul>
+        {% for challenge in challenges %}
+            <li>
+                <a href="{% url 'challenges:view' challenge_id=challenge.id %}">
+                    {{ challenge.title }}
+                </a>
+            </li>
+        {% endfor %}   
+    </ul>
+
+    <h3>Accomplishments that inspire me</h3>
+    <ul>
+        {% for inspiration in user.inspirations.all %}
+            <li>
+                <a href="{% url 'accomplishments:view' accomplishment_id=inspiration.accomplishment.id %}">
+                    {{ inspiration.accomplishment.title }}
+                </a>
+            </li>
+        {% endfor %}   
+    </ul>
     
+    <h3>Challenges I empathize with</h3>
+    <ul>
+        {% for inspiration in user.inspirations.all %}
+            <li>
+                <a href="{% url 'accomplishments:view' accomplishment_id=inspiration.accomplishment.id %}">
+                    {{ inspiration.accomplishment.title }}
+                </a>
+            </li>
+        {% endfor %}   
+    </ul>
+
     {% if editable %}
         <a href="{% url 'profile:update' username=request.user.username %}"><button>Update Profile</button></a>
     {% elif following %}

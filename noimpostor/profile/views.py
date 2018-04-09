@@ -9,15 +9,23 @@ def overview(request, username):
     """
     User overview page
 
-    displays user accomplishments, challenges, and conquers [conquered challenges]
+    displays user accomplishments, challenges, inspirations, and empathized challenges
     """
     user = get_object_or_404(User, username = username)
+
+    accomplishments = user.accomplishments.all()
+    challenges = user.challenges.all()
+    if request.user != user:
+        accomplishments = accomplishments.filter(privacy = 1)
+        challenges = challenges.filter(privacy = 1)
     
     context = { 
         'title': "%s%s's Profile" % (user.username[0].upper(), user.username[1:]),
         'user': user,
         # render 'update profile' button if the logged-in user is on their own overview page
-        'editable': user == request.user 
+        'editable': user == request.user,
+        'accomplishments': accomplishments,
+        'challenges': challenges
     }
 
     # authed user viewing another users profile page
