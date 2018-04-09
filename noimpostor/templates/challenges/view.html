@@ -1,0 +1,13 @@
+{% extends 'global/base.html' %}
+
+
+{% block content %}
+    <div>{{ author }}</div>
+    <div>{{ challenge.title }}</div>
+    <div>{{ challenge.notes }}</div>
+    <div>{{ challenge.get_impostor_level_display }}</div>
+    <div>{{ challenge.get_privacy_display }}</div>
+    <div>{{ challenge.created }}</div>
+    <div>{{ challenge.updated }}</div>
+{% endblock content %}
+    
