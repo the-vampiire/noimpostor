@@ -52,8 +52,9 @@ class Inspiration(Base):
     """
     class Meta:
         db_table = 'inspiration'
+        unique_together = ('inspired_user', 'accomplishment')
 
     # user.inspiring_accomplishments.all()[.filter()] -> users accomplishments that others have been inspired by
-    user = ForeignKey(User, on_delete = CASCADE, related_name = 'inspiring_accomplishments')
+    inspired_user = ForeignKey(User, on_delete = CASCADE, related_name = 'inspirations')
     # accomplishment.inspired_users.all()[.filter()] -> all of the users who have been inspired by the accomplishment
     accomplishment = ForeignKey(Accomplishment, on_delete = CASCADE, related_name = 'inspired_users')

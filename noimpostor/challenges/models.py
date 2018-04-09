@@ -34,12 +34,11 @@ class Empathy(Base):
     """
     class Meta:
         db_table = 'empathy'
+        unique_together = ('empathizing_user', 'challenge')
 
-# TODO: why does related name feel untuitive / backwards?
-# related_name is the name used to access all entries of the OTHER fk on the CURRENT fk
-# user.empathized_challenges.all() -> all of the users challenges that have been empthized with?
-# challenge.empathized_users.all() -> all of the users who have empathized with the challenge
-    user = ForeignKey(User, on_delete = CASCADE, related_name = 'empathized_challenges')
+    # empathizing_user.empathized_challenges.all() -> users challenges that empathize with
+    empathizing_user = ForeignKey(User, on_delete = CASCADE, related_name = 'empathized_challenges')
+    # challenge.empathizing_users.all() -> all of the users who have empathized with the challenge
     challenge = ForeignKey(Challenge, on_delete = CASCADE, related_name = 'empathizing_users')
 
 
