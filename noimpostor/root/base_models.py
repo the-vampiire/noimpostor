@@ -22,7 +22,7 @@ class Base(Model):
         abstract = True
 
     created = DateTimeField(editable = False)
-    updated = DateTimeField()
+    updated = DateTimeField(editable = False)
 
     # overload the save() method to apply automatic values on creation / updating
     def save(self, *args, **kwargs):

@@ -11,7 +11,7 @@ class Challenge(Post):
         db_table = 'challenges'
 
     _impostor_levels = ((index, value) for index, value in enumerate(["Shadow", "Looming", "Consumed", "Meltdown"]))
-    impostor_level = IntegerField(choices = _impostor_levels, default = 0, verbose_name = 'Panic Level')
+    impostor_level = IntegerField(choices = _impostor_levels, default = 0, verbose_name = 'Impostor Level')
 
 class Empathy(Base):
     """
