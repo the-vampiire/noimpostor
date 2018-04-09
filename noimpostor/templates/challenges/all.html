@@ -1,0 +1,11 @@
+{% extends 'global/base.html' %}
+
+
+{% block content %}
+    <ul>
+        {% for challenge in challenges %}
+            <li>{{ challenge.title }}</li>
+        {% endfor %}
+    </ul>
+{% endblock content %}
+    

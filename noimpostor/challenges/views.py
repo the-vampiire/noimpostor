@@ -5,6 +5,13 @@ from root.base_models import Privacy
 from .forms import ChallengeForm
 from .models import Challenge
 
+def all_challenges(request):
+    context = {
+        'title': 'Public Challenges',
+        'challenges': Challenge.objects.all().filter(privacy = 1)
+    }
+    return render(request, 'challenges/all.html', context)
+
 def view_challenge(request, challenge_id):
     """
     renders based on Challenge privacy setting
