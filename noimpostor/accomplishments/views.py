@@ -1,9 +1,11 @@
 from django.shortcuts import render, reverse, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
+from .models import Accomplishment, Inspiration
 from django.contrib.auth.models import User
-from root.base_models import Privacy
 from .forms import AccomplishmentForm
-from .models import Accomplishment
+from django.db import IntegrityError
+from root.base_models import Privacy
+from django.http import HttpResponse
 
 def all_accomplishments(request):
     context = {
@@ -35,10 +37,12 @@ def view_accomplishment(request, accomplishment_id):
     
     elif privacy == 'anonymous':
         author = 'Anonymous'
-            
+
+    inspiration = request.user.inspirations.all().filter(accomplishment = accomplishment)
     context = {
         'title': "%s's accomplishment" % author,
         'accomplishment': accomplishment,
+        'inspiration': inspiration[0].pk if inspiration.count() == 1 else None,
         'author': author
     }
     return render(request, 'accomplishments/view.html', context)
@@ -62,7 +66,7 @@ def user_accomplishments(request, username):
     }
     return render(request, 'accomplishments/user.html', context)
 
-login_required(login_url = 'actions:login')
+@login_required(login_url = 'actions:login')
 def create_accomplishment(request):
     form = AccomplishmentForm(
         request.POST or None,
@@ -103,3 +107,37 @@ def edit_accomplishment(request, accomplishment_id):
         'form': form
     }
     return render(request, 'accomplishments/edit.html', context)
+
+@login_required(login_url = 'actions:login')
+def inspiration(request, accomplishment_id):
+    accomplishment = get_object_or_404(Accomplishment, id = accomplishment_id)
+
+    if request.method == 'POST' and accomplishment.user != request.user:
+        inspiration_id = request.POST.get('inspiration_id')
+        
+        if inspiration_id == 'None':
+            # if no inspiration exists for the user-accomplishment pair
+            # create one [in try / except in case a duplicate exists]
+            try:
+                Inspiration(
+                    inspired_user = request.user,
+                    accomplishment = accomplishment
+                ).save()
+            except IntegrityError as error:
+                return HttpResponse(status_code = 400, content = error)
+
+        else:
+            # inspiration exists for the user-accomplishment pair
+            inspiration = get_object_or_404(
+                Inspiration,
+                inspired_user = request.user,
+                accomplishment = Accomplishment.objects.get(id = accomplishment_id)
+            )
+            # ensure that no tricksy hobbitses have sent an unassociated inspiration id
+            if inspiration.id == int(inspiration_id):
+                inspiration.delete()
+
+    return redirect(
+        reverse('accomplishments:view', kwargs = { 'accomplishment_id': accomplishment_id })
+    )
+

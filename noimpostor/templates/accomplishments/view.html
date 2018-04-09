@@ -9,5 +9,18 @@
     <div>{{ accomplishment.get_privacy_display }}</div>
     <div>{{ accomplishment.created }}</div>
     <div>{{ accomplishment.updated }}</div>
+    
+    {% if request.user != accomplishment.user %}
+        <form
+        method="POST"
+        action="{% url 'accomplishments:inspiration' accomplishment_id=accomplishment.pk %}"
+        >
+            {% csrf_token %}
+            <input type="hidden" name='inspiration_id' value="{{ inspiration }}">
+            <input type="submit" value="{% if inspiration is None %}Inspiring{% else %}Uninspiring{% endif %}">
+        </form> 
+    {% endif %}
+        
+    
 {% endblock content %}
     
