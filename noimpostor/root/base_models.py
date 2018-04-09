@@ -55,7 +55,6 @@ class Post(Base):
 
     title = CharField(blank = False, max_length = 140)
     notes = TextField(blank = True)
-    user = ForeignKey(User, on_delete = CASCADE, related_name = 'challenges')
     privacy = IntegerField(
         choices = Privacy.as_choices(),
         default = Privacy.private,

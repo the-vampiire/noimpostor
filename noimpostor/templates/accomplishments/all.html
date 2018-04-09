@@ -1,0 +1,11 @@
+{% extends 'global/base.html' %}
+
+
+{% block content %}
+    <ul>
+        {% for accomplishment in accomplishments %}
+            <li>{{ accomplishment.title }}</li>
+        {% endfor %}
+    </ul>
+{% endblock content %}
+    

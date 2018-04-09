@@ -15,6 +15,7 @@ INSTALLED_APPS = [
     'profile',
     'actions',
     'challenges',
+    'accomplishments',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
