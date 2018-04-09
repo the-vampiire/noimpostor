@@ -4,26 +4,6 @@ from root.base_models import Privacy
 from .forms import ChallengeForm
 from .models import Challenge
 
-from django.http import HttpResponse
-
-login_required(login_url = 'actions:login')
-def create_challenge(request):
-    form = ChallengeForm(
-        request.POST or None,
-        initial = { 'privacy': request.user.defaultprivacy.setting }
-    )
-    
-    if request.method == 'POST' and form.is_valid():
-        new_challenge = Challenge(user = request.user, **form.cleaned_data)
-        new_challenge.save()
-        return redirect(reverse('challenges:view', kwargs = { 'challenge_id': new_challenge.pk }))
-    
-    context = {
-        'title': 'New Challenge',
-        'form': form
-    }
-    return render(request, 'challenges/create.html', context)
-
 def view_challenge(request, challenge_id):
     """
     renders based on Challenge privacy setting
@@ -55,3 +35,44 @@ def view_challenge(request, challenge_id):
     }
     return render(request, 'challenges/view.html', context)
 
+login_required(login_url = 'actions:login')
+def create_challenge(request):
+    form = ChallengeForm(
+        request.POST or None,
+        initial = { 'privacy': request.user.defaultprivacy.setting }
+    )
+    
+    if request.method == 'POST' and form.is_valid():
+        new_challenge = Challenge(user = request.user, **form.cleaned_data)
+        new_challenge.save()
+        return redirect(reverse('challenges:view', kwargs = { 'challenge_id': new_challenge.pk }))
+    
+    context = {
+        'title': 'New Challenge',
+        'form': form
+    }
+    return render(request, 'challenges/create.html', context)
+
+@login_required(login_url = 'actions:login')
+def edit_challenge(request, challenge_id):
+    challenge = get_object_or_404(Challenge, id = challenge_id)
+    challenge_url = reverse('challenges:view', kwargs = { 'challenge_id': challenge_id })
+    # reject the tricksy hobbitses
+    if challenge.user != request.user:
+        return redirect(challenge_url)
+
+    form = ChallengeForm(
+        request.POST or None,
+        instance = challenge
+    )
+
+    if request.method == 'POST' and form.is_valid():
+        form.save()
+        return redirect(challenge_url)
+
+    context = {
+        'title': 'Edit Challenge',
+        'challenge_id': challenge_id,
+        'form': form
+    }
+    return render(request, 'challenges/edit.html', context)
