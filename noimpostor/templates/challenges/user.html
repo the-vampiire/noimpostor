@@ -1,0 +1,18 @@
+{% extends 'global/base.html' %}
+
+
+{% block content %}
+    
+    {% if challenges.count > 0 %}
+        <ul>
+            {% for challenge in challenges %}
+                <li>
+                    {{ challenge.title }}
+                </li>
+            {% endfor %}
+        </ul> 
+    {% else %}
+        <p>This user does not have any public challenges to view</p>
+    {% endif %}       
+{% endblock content %}
+    

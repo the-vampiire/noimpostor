@@ -1,5 +1,6 @@
-from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, reverse, redirect, get_object_or_404
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.models import User
 from root.base_models import Privacy
 from .forms import ChallengeForm
 from .models import Challenge
@@ -34,6 +35,25 @@ def view_challenge(request, challenge_id):
         'author': author
     }
     return render(request, 'challenges/view.html', context)
+
+def user_challenges(request, username):
+    user = get_object_or_404(User, username = username)
+
+    if user.defaultprivacy.get_setting_display() == 'private' and user != request.user:
+        return render(request, 'global/private.html')
+    
+    # display all challenges if the authed user is visiting their own page
+    if user == request.user:
+        challenges = user.challenges.all()
+    # otherwise only display the public challenges
+    else:
+        challenges = user.challenges.all().filter(privacy = 1)
+
+    context = {
+        'title': "%s's Challenges" % user.username,
+        'challenges': challenges
+    }
+    return render(request, 'challenges/user.html', context)
 
 login_required(login_url = 'actions:login')
 def create_challenge(request):
