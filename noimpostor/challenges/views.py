@@ -62,7 +62,7 @@ def user_challenges(request, username):
     }
     return render(request, 'challenges/user.html', context)
 
-login_required(login_url = 'actions:login')
+@login_required(login_url = 'actions:login')
 def create_challenge(request):
     form = ChallengeForm(
         request.POST or None,
