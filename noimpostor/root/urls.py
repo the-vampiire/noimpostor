@@ -7,5 +7,6 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('actions/', include('actions.urls', namespace = 'actions')),
     path('challenges/', include('challenges.urls', namespace = 'challenges')),
+    path('accomplishments/', include('accomplishments.urls', namespace = 'accomplishments')),
     re_path(r'^@(?P<username>\w{4,20})/', include('profile.urls', namespace = 'profile')),
 ]
