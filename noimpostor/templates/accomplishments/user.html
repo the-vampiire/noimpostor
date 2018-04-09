@@ -1,0 +1,18 @@
+{% extends 'global/base.html' %}
+
+
+{% block content %}
+    
+    {% if accomplishments.count > 0 %}
+        <ul>
+            {% for accomplishment in accomplishments %}
+                <li>
+                    {{ accomplishment.title }}
+                </li>
+            {% endfor %}
+        </ul> 
+    {% else %}
+        <p>This user does not have any public accomplishments to view</p>
+    {% endif %}       
+{% endblock content %}
+    

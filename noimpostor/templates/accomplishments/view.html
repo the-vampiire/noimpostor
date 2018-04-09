@@ -1,0 +1,13 @@
+{% extends 'global/base.html' %}
+
+
+{% block content %}
+    <div>{{ author }}</div>
+    <div>{{ accomplishment.title }}</div>
+    <div>{{ accomplishment.notes }}</div>
+    <div>{{ accomplishment.get_impostor_level_display }}</div>
+    <div>{{ accomplishment.get_privacy_display }}</div>
+    <div>{{ accomplishment.created }}</div>
+    <div>{{ accomplishment.updated }}</div>
+{% endblock content %}
+    
